@@ -1,0 +1,36 @@
+services:
+  # Service for the Spring Boot application
+  ecommerce-app:
+    image: ecommerce-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce2-app
+    ports:
+      - "8080:8080"  # Expose the app on port 8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ecommerce-db:5432/ecommerce
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=welcome1
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=org.postgresql.Driver
+    depends_on:
+      - ecommerce-db  # Wait for the database to be ready
+
+  # Service for PostgreSQL database
+  ecommerce-db:
+    image: postgres:13
+    container_name: ecommerce2-db
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: welcome1
+    volumes:
+      - ecommerce-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"  # Expose PostgreSQL on port 5432
+
+# Volumes to persist PostgreSQL data
+volumes:
+  ecommerce-db-data:
